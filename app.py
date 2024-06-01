@@ -106,7 +106,7 @@ def blast():
         y_location = request.values.get('y'),
     )
     database.append(report)
-    
+
     for email in subscribers:
         send_email('narc@sagnew.com', email, 'RUNESCAPE CRIME ALERT!', str(report))
 
@@ -125,6 +125,13 @@ def get_crimes():
     #         recent_crimes.append(str(crime))
     # return recent_crimes
     return [str(crime) for crime in database]
+
+
+@app.get('/map', methods=['GET'])
+def render_map():
+    crime = database[-1]
+    x, y = world_to_map(crime.x_location, crime.y_location)
+    return render_template('map.jinja2', map_x=x, map_y=y)
 
 
 def send_email(from_email, to_email, subject, body):
