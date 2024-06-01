@@ -124,7 +124,7 @@ def get_crimes():
     #     if is_within_15_minutes(now, crime_time) and nearby_ish((x, y), (crime.x_location, crime.y_location)):
     #         recent_crimes.append(str(crime))
     # return recent_crimes
-    return database
+    return [str(crime) for crime in database]
 
 
 def send_email(from_email, to_email, subject, body):
