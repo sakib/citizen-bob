@@ -8,7 +8,7 @@ from sendgrid.helpers.mail import Mail
 app = Flask(__name__)
 
 sg_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-subscribers = ['sagnewshreds@gmail.com', 'sakib.jalal@mongodb.com', 'drudolph914@gmail.com', 'sandile.keswa@gmail.om']
+subscribers = ['sagnewshreds@gmail.com', 'sakib.jalal@mongodb.com', 'drudolph914@gmail.com', 'sandile.keswa@gmail.com']
 
 
 @app.route('/subscribe', methods=['POST'])
