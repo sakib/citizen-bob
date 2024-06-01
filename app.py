@@ -133,7 +133,7 @@ def render_map():
     y = -500
     if len(database) > 0:
         crime = database[-1]
-        x, y = world_to_map(crime.x_location, crime.y_location)
+        x, y = world_to_map(int(crime.x_location), int(crime.y_location))
 
     return render_template('map.jinja2', map_x=x, map_y=y)
 
