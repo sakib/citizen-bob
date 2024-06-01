@@ -97,13 +97,13 @@ def subscribe():
 
 @app.route('/report', methods=['POST'])
 def blast():
-    location = json.loads(request.values.get('location'))
+    # location = json.loads(request.values.get('location'))
     report = CrimeReport(
         username = request.values.get('username'),
         crime = request.values.get('crime'),
         time = request.values.get('time'),
-        x_location = location.get('x'),
-        y_location = location.get('y'),
+        x_location = request.values.get('x'),
+        y_location = request.values.get('y'),
     )
     database.append(report)
     
