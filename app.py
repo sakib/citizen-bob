@@ -2,7 +2,7 @@ import json
 import os
 import time
 
-from flask import Flask, request
+from flask import Flask, request, render_template
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -21,7 +21,7 @@ def world_to_map(world_x: int, world_y: int):
         },
     }
 
-    for town, info in world_coords.items():
+    for town, info in world_ranges.items():
         world_coords = info['world_coords']
         top_left = world_coords[0]
         bottom_right = world_coords[1]
@@ -127,11 +127,12 @@ def get_crimes():
     return "\n".join([str(crime) for crime in database])
 
 
-@app.get('/map', methods=['GET'])
+@app.route('/map', methods=['GET'])
 def render_map():
-    crime = database[-1]
-    x, y = world_to_map(crime.x_location, crime.y_location)
-    return render_template('map.jinja2', map_x=x, map_y=y)
+    if len(database) > 0:
+        crime = database[-1]
+        x, y = world_to_map(crime.x_location, crime.y_location)
+        return render_template('map.jinja2', map_x=x, map_y=y)
 
 
 def send_email(from_email, to_email, subject, body):
