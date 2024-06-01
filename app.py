@@ -1,4 +1,6 @@
+import json
 import os
+import time
 
 from flask import Flask, request
 from sendgrid import SendGridAPIClient
@@ -33,9 +35,57 @@ def world_to_map(world_x: int, world_y: int):
             return info['map_coords']
 
 
+class CrimeReport:
+    def __init__(self, username, crime, time, x_location, y_location):
+        self.username = username
+        self.crime = crime
+        self.time = time
+        self.x_location = x_location
+        self.y_location = y_location
+
+    def __repr__(self):
+        return f'{self.username} has been spotted doing the following: {self.crime} at ({self.x_location}, {self.y_location}) at {self.time}'
+
+
+app = Flask(__name__)
+sg_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+subscribers = ['sagnewshreds@gmail.com', 'sakib.jalal@mongodb.com', 'drudolph914@gmail.com', 'sandile.keswa@gmail.com']
+# Scalable highly-efficient in-memory data store to record all alerts
+database = []
+# minutes
+CRIMINAL_ACTIVITY_RECENCY_ALGORITHM_HYPER_PARAMETER = 15
+TIME_FORMAT = '%H:%M:%S'
+
+
 with open('subscribers.txt') as file:
     for line in file:
         subscribers.append(line)
+
+
+# these should be timestamps
+def is_within_15_minutes(time1, time2):
+    # Calculate the time difference
+    time_diff = abs(time1_obj - time2_obj)
+
+    # Check if the time difference is within TOLERABLE PARAMETERS
+    return time_diff <= 60 * CRIMINAL_ACTIVITY_RECENCY_ALGORITHM_HYPER_PARAMETER
+
+
+def string_to_unix_timestamp(date_string):
+    # Parse the string into a datetime object
+    date_obj = datetime.strptime(date_string, '%A, %B %d, %Y %H:%M:%S %p')
+
+    # Convert the datetime object to a Unix timestamp
+    unix_timestamp = date_obj.timestamp()
+
+    # Convert to integer
+    return int(unix_timestamp)
+
+
+def nearby_ish(location1, location2):
+    x1, y1 = location1
+    x2, y2 = location2
+    return abs(x1 - x2) < 100000 and abs(y1 - y2) < 100000
 
 
 @app.route('/subscribe', methods=['POST'])
@@ -47,17 +97,34 @@ def subscribe():
 
 @app.route('/report', methods=['POST'])
 def blast():
-    username = request.values.get('username')
-    crime = request.values.get('crime')
-    time = request.values.get('time')
-    location = request.values.get('location')
-
-    body = f'{username} has been spotted doing the following: {crime} at {location} at {time}'
-
+    location = json.loads(request.values.get('location'))
+    report = CrimeReport(
+        username = request.values.get('username'),
+        crime = request.values.get('crime'),
+        time = request.values.get('time'),
+        x_location = location.get('x'),
+        y_location = location.get('y'),
+    )
+    database.append(report)
+    
     for email in subscribers:
-        send_email('narc@sagnew.com', email, 'RUNESCAPE CRIME ALERT!', body)
+        send_email('narc@sagnew.com', email, 'RUNESCAPE CRIME ALERT!', str(report))
 
     return '', 200
+
+
+@app.route('/getcrimes', methods=['GET'])
+def get_crimes():
+    recent_crimes = []
+    x = request.args.get('x')
+    y = request.args.get('y')
+    now = int(time.time())
+    # for crime in database:
+    #     crime_time = string_to_unix_timestamp(crime.time)
+    #     if is_within_15_minutes(now, crime_time) and nearby_ish((x, y), (crime.x_location, crime.y_location)):
+    #         recent_crimes.append(str(crime))
+    # return recent_crimes
+    return database
 
 
 def send_email(from_email, to_email, subject, body):
