@@ -8,18 +8,16 @@
 
       .notification {
         position: absolute;
-        top: 50%;
-        left: 50%;
         z-index: 100;
         background-color: red;
         color: white;
         width: 100px;
-        height: 50px;
+        height: 20px;
       }
     </style>
   </head>
   <body>
     <img src="runescape.png" />
-    <div class="notification">lurring </div>
+    <div class="notification" style="left: {{map_x}}px; top: {{map_y}};"></div>
   </body>
 </html>

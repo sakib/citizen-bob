@@ -10,6 +10,29 @@ app = Flask(__name__)
 sg_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
 subscribers = ['sagnewshreds@gmail.com', 'sakib.jalal@mongodb.com', 'drudolph914@gmail.com', 'sandile.keswa@gmail.com']
 
+
+def world_to_map(world_x: int, world_y: int):
+    world_ranges = {
+        'lumbridge': {
+            'world_coords': [(2000, 2000),(5000, 5000)],
+            'map_coords': [400, 400]
+        },
+    }
+
+    for town, info in world_coords.items():
+        world_coords = info['world_coords']
+        top_left = world_coords[0]
+        bottom_right = world_coords[1]
+
+        is_in_town = world_x >= top_left[0] \
+            and world_x <= bottom_right[0] \
+            and world_y >= top_left[1] \
+            and world_y <= bottom_right[1]
+
+        if is_in_town:
+            return info['map_coords']
+
+
 with open('subscribers.txt') as file:
     for line in file:
         subscribers.append(line)
