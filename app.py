@@ -6,7 +6,7 @@ from flask import Flask, request, render_template
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-
+# hello this is irena. i am a fellow
 app = Flask(__name__)
 
 sg_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
