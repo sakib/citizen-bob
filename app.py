@@ -124,7 +124,7 @@ def get_crimes():
     #     if is_within_15_minutes(now, crime_time) and nearby_ish((x, y), (crime.x_location, crime.y_location)):
     #         recent_crimes.append(str(crime))
     # return recent_crimes
-    return [str(crime) for crime in database]
+    return "\n".join([str(crime) for crime in database])
 
 
 @app.get('/map', methods=['GET'])
