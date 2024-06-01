@@ -129,10 +129,13 @@ def get_crimes():
 
 @app.route('/map', methods=['GET'])
 def render_map():
+    x = -500
+    y = -500
     if len(database) > 0:
         crime = database[-1]
         x, y = world_to_map(crime.x_location, crime.y_location)
-        return render_template('map.jinja2', map_x=x, map_y=y)
+
+    return render_template('map.jinja2', map_x=x, map_y=y)
 
 
 def send_email(from_email, to_email, subject, body):
