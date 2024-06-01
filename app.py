@@ -17,7 +17,7 @@ def world_to_map(world_x: int, world_y: int):
     world_ranges = {
         'lumbridge': {
             'world_coords': [(2000, 2000),(5000, 5000)],
-            'map_coords': [400, 400]
+            'map_coords': [500, 500]
         },
     }
 
@@ -51,7 +51,7 @@ app = Flask(__name__)
 sg_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
 subscribers = ['sagnewshreds@gmail.com', 'sakib.jalal@mongodb.com', 'drudolph914@gmail.com', 'sandile.keswa@gmail.com']
 # Scalable highly-efficient in-memory data store to record all alerts
-database = []
+database = [CrimeReport()]
 # minutes
 CRIMINAL_ACTIVITY_RECENCY_ALGORITHM_HYPER_PARAMETER = 15
 TIME_FORMAT = '%H:%M:%S'
@@ -135,7 +135,7 @@ def render_map():
         crime = database[-1]
         x, y = world_to_map(int(crime.x_location), int(crime.y_location))
 
-    return render_template('map.jinja2', map_x=x, map_y=y)
+    return render_template('map.jinja2', map_x=x, map_y=y, crime_description=crime.crime)
 
 
 def send_email(from_email, to_email, subject, body):
