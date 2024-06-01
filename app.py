@@ -17,17 +17,22 @@ with open('subscribers.txt') as file:
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
-    from_email = request.form['from']
+    from_email = request.values.get('from')
     subscribers.add(from_email)
     return '', 200
 
 
 @app.route('/report', methods=['POST'])
 def blast():
-    crime = request.form['crime']
+    username = request.values.get('username')
+    crime = request.values.get('crime')
+    time = request.values.get('time')
+    location = request.values.get('location')
+
+    body = f'{username} has been spotted doing the following: {crime} at {location} at {time}'
 
     for email in subscribers:
-        send_email('narc@sagnew.com', email, 'RUNESCAPE CRIME ALERT!', crime)
+        send_email('narc@sagnew.com', email, 'RUNESCAPE CRIME ALERT!', body)
 
     return '', 200
 
